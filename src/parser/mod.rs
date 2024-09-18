@@ -1,3 +1,5 @@
+pub mod utils;
+
 /* Struct representing a Prolog Rule.
  
 A Rule consists of a Head and a Body.
