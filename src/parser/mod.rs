@@ -1,42 +1,47 @@
 pub mod utils;
 
-/* Struct representing a Prolog Rule.
- 
-A Rule consists of a Head and a Body.
- 
-# Head: The Head appears before the `:-` and represents the query being searched for.
- 
-# Body: The Body appears after the `:-` and represents a list of facts or sub-queries that are chained together.
-*/
-
+/// Structure representing a Prolog predicate.
+///
+/// A predicate consists of a name (head) and a list of arguments.
+///
+/// # Fields
+/// - `head`: The name of the predicate.
+/// - `args`: A list of arguments for the predicate.
 #[derive(Debug)]
-pub struct PrologRule{
-    pub head: String, 
-    pub body: Vec<String>,
+pub struct PrologPredicate {
+    pub head: String,
+    pub args: Vec<String>,
 }
 
-/* Struct representing a Prolog Fact. 
+/// Structure representing a Prolog rule.
+///
+/// A rule consists of a head and a body.
+///
+/// # Fields
+/// - `head`: The predicate representing the rule.
+/// - `body`: A list of predicates that form the body of the rule.
+#[derive(Debug)]
+pub struct PrologRule {
+    pub head: PrologPredicate,
+    pub body: Vec<PrologPredicate>,
+}
 
-A Fact consists in a Head with a assertion to be considered True.
-
-# Head: The head represents a statement that is assumed to be true. 
-
-Dont have a separated body is simply considered true.
-
-*/
-
+/// Structure representing a Prolog fact.
+///
+/// A fact is a statement that is considered true.
+///
+/// # Fields
+/// - `head`: The predicate representing the fact.
 #[derive(Debug)]
 pub struct PrologFact {
-    pub head: String,
+    pub predicate: PrologPredicate,
 }
 
-/* Enum representing either a Prolog Fact or Prolog Rule.
-
-# Variants:
-    - Fact: represents a fact, which is a statement assumed to be true.
-    - Rule: represents a rule, which with a Head and a Body and need be infered
-*/
-
+/// Enum representing a Prolog statement.
+///
+/// Variants include:
+/// - `PrologFact`: represents a fact, which is an assertion assumed to be true.
+/// - `PrologRule`: represents a rule, consisting of a head and a body that need to be inferred.
 #[derive(Debug)]
 pub enum PrologStatement {
     PrologFact(PrologFact),
