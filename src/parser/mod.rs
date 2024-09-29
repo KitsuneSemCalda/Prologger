@@ -1,4 +1,10 @@
+pub mod parse_fact;
+pub mod parse_predicate;
+pub mod parse_rule;
+pub mod parse_statement;
 pub mod utils;
+
+use core::fmt;
 
 /// Structure representing a Prolog predicate.
 ///
@@ -11,6 +17,16 @@ pub mod utils;
 pub struct PrologPredicate {
     pub head: String,
     pub args: Vec<String>,
+}
+
+impl fmt::Display for PrologPredicate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.args.is_empty() {
+            write!(f, "{}", self.head)
+        } else {
+            write!(f, "{}({})", self.head, self.args.join(", "))
+        }
+    }
 }
 
 /// Structure representing a Prolog rule.
@@ -26,6 +42,13 @@ pub struct PrologRule {
     pub body: Vec<PrologPredicate>,
 }
 
+impl fmt::Display for PrologRule {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let body_str: Vec<String> = self.body.iter().map(|b| b.to_string()).collect();
+        write!(f, "{} :- {}", self.head, body_str.join(", "))
+    }
+}
+
 /// Structure representing a Prolog fact.
 ///
 /// A fact is a statement that is considered true.
@@ -35,6 +58,12 @@ pub struct PrologRule {
 #[derive(Debug)]
 pub struct PrologFact {
     pub predicate: PrologPredicate,
+}
+
+impl fmt::Display for PrologFact {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Fact: {}", self.predicate)
+    }
 }
 
 /// Enum representing a Prolog statement.
