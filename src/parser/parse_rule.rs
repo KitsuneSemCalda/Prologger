@@ -7,10 +7,6 @@ pub fn parse_rule(line: &str) -> Option<PrologRule> {
         return None;
     }
 
-    println!("parts[0]: {}", parts[0]);
-    println!("parts[1]: {}", parts[1]);
-
-
     let head = parse_predicate(parts[0].trim())?;
     let body = parse_predicates(parts[1].trim())?;
 
