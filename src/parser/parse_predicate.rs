@@ -1,29 +1,12 @@
 use super::PrologPredicate;
 
-pub fn parse_predicates(line: &str) -> Option<Vec<PrologPredicate>> {
-    println!("line to be treated: {}", line);
-    let mut predicates: Vec<PrologPredicate> = Vec::new();
-
-    let list_predicate = line.split(',').map(|s| s.trim());
-
-    for predicate in list_predicate {
-        println!("rule predicate: {}", predicate);
-        if let Some(converted_predicate) = parse_predicate(predicate.trim()){
-            predicates.push(converted_predicate);
-        }
-    }
-
-    return Some(predicates)
-}
-
 pub fn parse_predicate(part: &str) -> Option<PrologPredicate> {
-    let part = part.trim();
+    let npart = part.trim();
 
-      if let Some(open_param_index) = part.find('(') {
-        if let Some(close_param_index) = part.find(')') {
-            let args_str = &part[open_param_index + 1..close_param_index];
-
-            let head = &part[..open_param_index].trim();
+    if let Some(open_param_index) = npart.find('(') {
+        if let Some(close_param_index) = npart.find(')') {
+            let args_str = &npart[open_param_index + 1..close_param_index];
+            let head = &npart[..open_param_index].trim();
 
             let args: Vec<String> = args_str
                 .split(',')
@@ -36,9 +19,46 @@ pub fn parse_predicate(part: &str) -> Option<PrologPredicate> {
                 args,
             })
         } else {
+            eprintln!("Missing closing parenthesis");
             None
         }
     } else {
-        Some(PrologPredicate { head: part.to_string(), args: vec![] })
+        Some(PrologPredicate {
+            head: part.to_string(),
+            args: vec![],
+        })
     }
+}
+
+pub fn parse_predicates(line: &str) -> Option<Vec<PrologPredicate>> {
+    let mut predicates = Vec::new();
+    let mut current_predicate = String::new();
+    let mut open_parens = 0;
+
+    for c in line.chars() {
+        match c {
+            '(' => {
+                open_parens += 1;
+                current_predicate.push(c);
+            }
+            ')' => {
+                open_parens -= 1;
+                current_predicate.push(c);
+            }
+            ',' if open_parens == 0 => {
+                if !current_predicate.is_empty() {
+                    predicates.push(parse_predicate(&current_predicate)?);
+                    current_predicate.clear();
+                }
+            }
+            _ => current_predicate.push(c),
+        }
+    }
+
+    if !current_predicate.is_empty() {
+        predicates.push(parse_predicate(&current_predicate)?);
+        current_predicate.clear();
+    }
+
+    Some(predicates)
 }
